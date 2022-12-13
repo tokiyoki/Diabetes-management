@@ -14,6 +14,7 @@ const corsOptions ={
 }
 
 app.use( cors(corsOptions) );
+app.use( express.json() );
 
 // Configure middleware
 
@@ -26,7 +27,7 @@ const getUserTasksController = async (req, res) => {
     const extendedTable = `${table} LEFT JOIN ${table2} ON ${table}.formID = ${table2}.formID`;
     const fields = ['tasks.taskID', 'tasks.taskTime', 'tasks.description', 'tasks.formID', 'tasks.userID', 'tasks.isCompleted','forms.name'];
     const sql = `SELECT ${fields} FROM ${extendedTable}`;
-    const sql_filtered = sql + ` WHERE ${table}.userID = ${userID}`;
+    const sql_filtered = sql + ` WHERE ${table}.userID = ${userID} AND ${table}.isCompleted = 0`;
     console.log(sql_filtered)
     // Execute query
     let isSuccess = false;
@@ -65,11 +66,12 @@ const getFormlinesController = async (req, res) => {
     // Execute query
     let isSuccess = false;
     let message = "";
-    let result = null;
+    let result = [];
     try {
         [result] = await database.query(sql_filtered);
         // Check result
         if(result.length === 0) {
+            isSuccess = true;
             message = "No form lines found";
         } else {
             isSuccess = true;
@@ -85,8 +87,8 @@ const getFormlinesController = async (req, res) => {
 };
 
 const postTaskRecordingsController = async (req, res) => {
-    console.log(req.query);
-    const taskRecordings = req.query;
+    console.log(req.body);
+    const taskRecordings = req.body;
     
     //Build SQL
     const table = 'taskRecordings';
@@ -119,6 +121,7 @@ const postTaskRecordingsController = async (req, res) => {
 
 const postCompleteTaskController = async (req, res) => {
     const taskID = req.params.tid;
+    console.log(taskID);
     
     //Build SQL
     const table = 'tasks';
