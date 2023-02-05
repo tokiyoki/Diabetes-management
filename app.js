@@ -63,168 +63,99 @@ const createFormlinesController = async(req, res) => {
     let formID = req.body.formID;
     let recordingID = req.body.recordingID
 
-    //Build SQL
-    const table = 'formLines';
-
-    const fields = ['formLines.recordingID', 'formLines.formID'];
-
-    const sql = `INSERT INTO ${table} ( ${fields} )`;
-    let sql_values = sql + ` VALUES ( ${recordingID}, ${formID} )`;
     
-    console.log(sql_values);
+    var result = await DAO.createFormLines(formID, recordingID);
 
-    // Execute query
-    let isSuccess = true;
-    let message = "";
-    let result = null;
-    
-    try {
-        [result] = await database.query(sql_values);
-        // Check if sql executed correctly
-    } catch(error) {
-        isSuccess = false;
-        message = `Failed to execute query: ${error.message}`;
-    }
-    
     // Responses
-    isSuccess
-        ? res.status(200).json(result)
-        : res.status(400).json({message: message});
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
 }
 
 const createFormController = async(req, res) => {
-    let formID = req.body.formID;
     let formName = '"' + req.body.name +'"';
+    let userID = '"' + req.body.userID +'"';
 
-    //Build SQL
-    const table = 'forms';
-
-    const fields = ['forms.formID', 'forms.name'];
-
-    const sql = `INSERT INTO ${table} ( ${fields} )`;
-    let sql_values = sql + ` VALUES ( ${formID}, ${formName} )`;
-    
-    console.log(sql_values);
-
-    // Execute query
-    let isSuccess = true;
-    let message = "";
-    let result = null;
-    
-    try {
-        [result] = await database.query(sql_values);
-        // Check if sql executed correctly
-    } catch(error) {
-        isSuccess = false;
-        message = `Failed to execute query: ${error.message}`;
-    }
+    var result = await DAO.createForm(formName, userID);
     
     // Responses
-    isSuccess
-        ? res.status(200).json(result)
-        : res.status(400).json({message: message});
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
 }
 
 const updateFormController = async(req, res) => {
     let formID = req.body.formID;
     let formName = '"' + req.body.name +'"';
 
-    //Build SQL
-    const table = 'forms';
-
-    const fields = ['forms.name'];
-
-    const filter_fields = ['forms.formID'];
-
-    const sql = `UPDATE ${table} SET `;
-    let sql_values = sql + `${fields[0]} = ${formName} `;
-    let filtered_sql = sql_values + `WHERE ${filter_fields[0]} = ${formID}`;
-    
-    console.log(filtered_sql);
-
-    // Execute query
-    let isSuccess = true;
-    let message = "";
-    let result = null;
-    
-    try {
-        [result] = await database.query(filtered_sql);
-        // Check if sql executed correctly
-    } catch(error) {
-        isSuccess = false;
-        message = `Failed to execute query: ${error.message}`;
-    }
+    var result = await DAO.updateForm(formID, formName);
     
     // Responses
-    isSuccess
-        ? res.status(200).json(result)
-        : res.status(400).json({message: message});
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
 }
 
 const removeFormLinesController = async(req, res) => {
     let formID = req.body.formID;
     let recordingID = req.body.recordingID;
 
-    //Build SQL
-    const table = 'formlines';
-
-    const filter_fields = ['formlines.formID', 'formlines.recordingID'];
-
-    const sql = `DELETE FROM ${table} `;
-    let filtered_sql = sql + `WHERE ${filter_fields[0]} = ${formID} AND ${filter_fields[1]} = ${recordingID}`;
-    
-    console.log(filtered_sql);
-
-    // Execute query
-    let isSuccess = true;
-    let message = "";
-    let result = null;
-    
-    try {
-        [result] = await database.query(filtered_sql);
-        // Check if sql executed correctly
-    } catch(error) {
-        isSuccess = false;
-        message = `Failed to execute query: ${error.message}`;
-    }
+    var result = await DAO.removeFormLines(formID, recordingID);
     
     // Responses
-    isSuccess
-        ? res.status(200).json(result)
-        : res.status(400).json({message: message});
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
+}
+
+const removeAllFormLinesController = async(req, res) => {
+    let formID = req.params.fid;
+
+    var result = await DAO.removeAllFormLines(formID);
+    
+    // Responses
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
 }
 
 const removeFormController = async(req, res) => {
-    let formID = req.body.formID;
+    let formID = req.params.fid;
 
-    //Build SQL
-    const table = 'forms';
-
-    const filter_fields = ['forms.formID'];
-
-    const sql = `DELETE FROM ${table} `;
-    let filtered_sql = sql + `WHERE ${filter_fields[0]} = ${formID}`;
-    
-    console.log(filtered_sql);
-
-    // Execute query
-    let isSuccess = true;
-    let message = "";
-    let result = null;
-    
-    try {
-        [result] = await database.query(filtered_sql);
-        // Check if sql executed correctly
-    } catch(error) {
-        isSuccess = false;
-        message = `Failed to execute query: ${error.message}`;
-    }
+    var result = await DAO.removeForm(formID);
     
     // Responses
-    isSuccess
-        ? res.status(200).json(result)
-        : res.status(400).json({message: message});
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
 }
+
+const getRecordingsController = async (req, res) => {
+    var result = await DAO.getRecordings();
+    // Responses
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
+};
+
+const getRecordingsByFormController = async (req, res) => {
+    let formID = req.params.fid;
+    var result = await DAO.getRecordingsById(formID);
+    // Responses
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
+};
+
+const getUserFormsController = async (req, res) => {
+    const userID = req.params.uid;
+    
+    var result = await DAO.getUserForms(userID);
+    // Responses
+    result.isSuccess
+        ? res.status(200).json(result.result)
+        : res.status(400).json({message: result.message});
+};
 
 
 // Endpoints
@@ -235,15 +166,21 @@ app.post('/api/tasks/completetask/:tid', postCompleteTaskController);
 //Taskrecordings
 app.post('/api/taskrecordings/', postTaskRecordingsController);
 
+//Recordings
+app.get('/api/recordings/', getRecordingsController);
+
 //Formlines
 app.get('/api/formlines/:fid', getFormlinesController);
 app.post('/api/formlines/', createFormlinesController);
 app.post('/api/formlines/remove/', removeFormLinesController);
+app.post('/api/formlines/remove/:fid', removeAllFormLinesController);
+app.get('/api/formlines/recordings/:fid', getRecordingsByFormController);
 
 //Forms
+app.get('/api/forms/users/:uid', getUserFormsController);
 app.post('/api/forms/', createFormController);
 app.post('/api/forms/update/', updateFormController);
-app.post('/api/forms/remove/', removeFormController);
+app.post('/api/forms/remove/:fid', removeFormController);
 
 // Start server
 const PORT = process.env.PORT || 5000;
