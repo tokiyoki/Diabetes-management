@@ -2,22 +2,38 @@
 import express from 'express';
 import cors from 'cors';
 import * as DAO from './DAO.js';
+import tasksRouter from './routers/tasks-router.js';
+import taskrecordingsRouter from './routers/taskrecordings-router.js';
+import recordingsRouter from './routers/recordings-router.js';
+import formlinesRouter from './routers/formlines-router.js';
+import formsRouter from './routers/forms-router.js';
 
 // Configure express app
 const app = new express();
 
-//configure cors
-const corsOptions ={
-   origin:'*', 
-   credentials:true,           
-   optionSuccessStatus:200,
-}
-
-app.use( cors(corsOptions) );
+app.use( cors({ origin: '*' }) );
 app.use( express.json() );
+app.use( express.urlencoded({ extended: true }) );
 
 // Configure middleware
+app.use( function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+} );
 
+// Endpoints
+app.use('/api/tasks', tasksRouter);
+app.use('/api/taskrecordings', taskrecordingsRouter);
+app.use('/api/recordings', recordingsRouter);
+app.use('/api/formlines', formlinesRouter);
+app.use('/api/forms', formsRouter);
+
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+/*
 // Controllers
 const getUserTasksController = async (req, res) => {
     const userID = req.params.uid;
@@ -160,28 +176,25 @@ const getUserFormsController = async (req, res) => {
 
 // Endpoints
 //Tasks
-app.get('/api/tasks/users/:uid', getUserTasksController); //TODO: update syntax in documentation TODO:add completed to syntax
-app.post('/api/tasks/completetask/:tid', postCompleteTaskController);
+//app.get('/api/tasks/users/:uid', getUserTasksController); //TODO: update syntax in documentation TODO:add completed to syntax
+//app.post('/api/tasks/completetask/:tid', postCompleteTaskController);//update
 
 //Taskrecordings
-app.post('/api/taskrecordings/', postTaskRecordingsController);
+//app.post('/api/taskrecordings/', postTaskRecordingsController);//create
 
 //Recordings
-app.get('/api/recordings/', getRecordingsController);
+//app.get('/api/recordings/', getRecordingsController);
 
 //Formlines
-app.get('/api/formlines/:fid', getFormlinesController);
-app.post('/api/formlines/', createFormlinesController);
-app.post('/api/formlines/remove/', removeFormLinesController);
-app.post('/api/formlines/remove/:fid', removeAllFormLinesController);
-app.get('/api/formlines/recordings/:fid', getRecordingsByFormController);
+//app.get('/api/formlines/:fid', getFormlinesController);
+//app.post('/api/formlines/', createFormlinesController);//create
+//app.post('/api/formlines/remove/', removeFormLinesController);
+//app.post('/api/formlines/remove/:fid', removeAllFormLinesController);
+//app.get('/api/formlines/recordings/:fid', getRecordingsByFormController);
 
 //Forms
-app.get('/api/forms/users/:uid', getUserFormsController);
-app.post('/api/forms/', createFormController);
-app.post('/api/forms/update/', updateFormController);
-app.post('/api/forms/remove/:fid', removeFormController);
-
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+//app.get('/api/forms/users/:uid', getUserFormsController);
+//app.post('/api/forms/', createFormController);//create
+//app.post('/api/forms/update/', updateFormController);//update
+//app.post('/api/forms/remove/:fid', removeFormController);
+*/
