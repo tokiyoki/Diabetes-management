@@ -10,6 +10,7 @@ class Accessor {
     create = async (record) => {
       try {
         const { sql, data } = this.model.buildCreateQuery(record); 
+        console.log(sql);
         const status = await this.database.query(sql, data);
   
         const { isSuccess, result, message } = await this.read(status[0].insertId, null);
@@ -25,7 +26,9 @@ class Accessor {
     read = async (id, id2, variant) => {
       try {
         const { sql, data } = this.model.buildReadQuery(id, id2, variant);
+        console.log(sql);
         const [result] = await this.database.query(sql, data);
+
         return (result.length === 0)
           ? { isSuccess: false, result: null, message: 'No record(s) found' }
           : { isSuccess: true, result: result, message: 'Record(s) successfully recovered' };
@@ -38,7 +41,9 @@ class Accessor {
     update = async (record, id, id2) => {
       try {
         const { sql, data } = this.model.buildUpdateQuery(record, id, id2);
+        console.log(sql);
         const status = await this.database.query(sql, data);
+
         if (status[0].affectedRows === 0)
           return { isSuccess: false, result: null, message: 'Failed to update record: no rows affected' };
   
@@ -55,7 +60,9 @@ class Accessor {
     delete = async (id, id2) => {
       try {
         const { sql, data } = this.model.buildDeleteQuery(id, id2);
+        console.log(sql);
         const status = await this.database.query(sql, data);
+
         return status[0].affectedRows === 0
           ? { isSuccess: false, result: null, message: `Failed to delete record ${id}` }
           : { isSuccess: true, result: null, message: 'Record successfully deleted' };

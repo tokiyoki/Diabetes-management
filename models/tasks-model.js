@@ -1,7 +1,7 @@
 const model = {};
 
 model.table = 'tasks';
-model.mutableFields = ['taskTime', 'tasks.formID', 'description', 'tasks.userID', 'isCompleted'];
+model.mutableFields = ['taskTime', 'tasks.formID', 'description', 'tasks.userID', 'isCompleted', 'tasks.name'];
 model.idField = 'taskID';
 
 model.buildReadQuery = (id, id2, variant) => {
