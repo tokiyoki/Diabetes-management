@@ -12,10 +12,6 @@ class Model {
   
     buildSetFields = (fields, record, isCreate = true) => fields.reduce((setSQL, field, index) => //{
         setSQL + ((isCreate || record[field.slice(field.indexOf(".") + 1)]) ?  ((setSQL === "" || setSQL === "SET ") ? '' : ', ') + `${field}=:${field.slice(field.indexOf(".") + 1)}` : "" ), 'SET '
-        /*if(isCreate) {
-          setSQL + `${field}=:${field.slice(field.indexOf(".") + 1)}` + ((index === fields.length - 1) ? '' : ', '), 'SET '
-        }
-      }*/
     );
   
     buildCreateQuery = (record) => {
